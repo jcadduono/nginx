@@ -76,6 +76,7 @@ if [ $PCRE != NONE ]; then
 
             if [ "$NGX_PLATFORM" = win32 ]; then
                 have=PCRE_STATIC . auto/have
+                PCRE_CONF_OPT="$PCRE_CONF_OPT --host=\"\$(HOST)\""
             fi
 
             CORE_DEPS="$CORE_DEPS $PCRE/pcre.h"
