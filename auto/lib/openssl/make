@@ -46,16 +46,29 @@ END
             *)  ngx_prefix="$PWD/$OPENSSL/.openssl" ;;
         esac
 
+if [ "$NGX_PLATFORM" = win32 ]; then
         cat << END                                            >> $NGX_MAKEFILE
 
 $OPENSSL/.openssl/include/openssl/ssl.h:	$NGX_MAKEFILE
 	cd $OPENSSL \\
 	&& if [ -f Makefile ]; then \$(MAKE) clean; fi \\
-	&& ./config --prefix=$ngx_prefix no-shared no-threads $OPENSSL_OPT \\
+	&& WINDRES="\$(HOST)-windres" CC="\$(CC)" ./Configure --prefix=$ngx_prefix mingw64 no-shared no-threads -march="${ARCH:-native}" $OPENSSL_OPT \\
 	&& \$(MAKE) \\
 	&& \$(MAKE) install_sw LIBDIR=lib
 
 END
+else
+        cat << END                                            >> $NGX_MAKEFILE
+
+$OPENSSL/.openssl/include/openssl/ssl.h:	$NGX_MAKEFILE
+	cd $OPENSSL \\
+	&& if [ -f Makefile ]; then \$(MAKE) clean; fi \\
+	&& ./config --prefix=$ngx_prefix no-shared no-threads -march="${ARCH:-native}" $OPENSSL_OPT \\
+	&& \$(MAKE) \\
+	&& \$(MAKE) install_sw LIBDIR=lib
+
+END
+fi
 
     ;;
 
