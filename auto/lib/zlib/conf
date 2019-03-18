@@ -3,7 +3,16 @@
 # Copyright (C) Nginx, Inc.
 
 
-if [ $ZLIB != NONE ]; then
+if [ $ZLIB = shared ]; then
+
+    have=NGX_ZLIB . auto/have
+
+    CORE_INCS="$CORE_INCS /usr/local/$HOST/include"
+    CORE_LIBS="$CORE_LIBS -L/usr/local/$HOST/lib -lz"
+
+    ZLIB=YES
+
+elif [ $ZLIB != NONE ]; then
     CORE_INCS="$CORE_INCS $ZLIB"
 
     case "$NGX_CC_NAME" in

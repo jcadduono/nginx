@@ -3,7 +3,24 @@
 # Copyright (C) Nginx, Inc.
 
 
-if [ $OPENSSL != NONE ]; then
+if [ $OPENSSL = shared ]; then
+
+    have=NGX_OPENSSL . auto/have
+    have=NGX_SSL . auto/have
+
+    CORE_INCS="$CORE_INCS /usr/local/$HOST/include"
+    CORE_DEPS="$CORE_DEPS /usr/local/$HOST/include/openssl/ssl.h"
+    CORE_LIBS="$CORE_LIBS -L/usr/local/$HOST/lib -lssl -lcrypto"
+    CORE_LIBS="$CORE_LIBS $NGX_LIBDL"
+    CORE_LIBS="$CORE_LIBS $NGX_LIBPTHREAD"
+
+    if [ "$NGX_PLATFORM" = win32 ]; then
+        CORE_LIBS="$CORE_LIBS -lgdi32 -lcrypt32 -lws2_32"
+    fi
+
+    OPENSSL=YES
+
+elif [ $OPENSSL != NONE ]; then
 
     case "$CC" in
 
