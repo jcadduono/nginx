@@ -3,7 +3,26 @@
 # Copyright (C) Nginx, Inc.
 
 
-if [ $PCRE != NONE ]; then
+if [ $PCRE = shared ]; then
+
+    have=NGX_PCRE . auto/have
+
+    if [ "$NGX_PLATFORM" = win32 ]; then
+        PCRE_DIR="/usr/local/$HOST"
+    else
+        PCRE_DIR="/usr/local"
+    fi
+
+    CORE_INCS="$CORE_INCS $PCRE_DIR/include"
+    CORE_LIBS="$CORE_LIBS -L$PCRE_DIR/lib -lpcre"
+    PCRE=YES
+
+    if [ $PCRE_JIT = YES ]; then
+        have=NGX_HAVE_PCRE_JIT . auto/have
+    fi
+
+elif [ $PCRE != NONE ]; then
+    CORE_INCS="$CORE_INCS $PCRE"
 
     if [ -f $PCRE/src/pcre2.h.generic ]; then
 

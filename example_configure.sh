@@ -6,8 +6,8 @@ MODDIR=$HOME/build/nginx-modules
 NGDIR="C:/server/nginx"
 export ARCH=native
 export HOST=x86_64-w64-mingw32
-export LUAJIT_LIB=/usr/$HOST/bin
-export LUAJIT_INC=/usr/$HOST/include/luajit-2.1
+export LUAJIT_LIB=/usr/local/$HOST/bin
+export LUAJIT_INC=/usr/local/$HOST/include/luajit-2.1
 auto/configure \
 --prefix=$NGDIR \
 --crossbuild=win32 \
@@ -27,9 +27,10 @@ auto/configure \
 --with-http_addition_module \
 --with-http_realip_module \
 --with-file-aio \
---with-openssl=$LIBDIR/openssl \
---with-pcre=$LIBDIR/pcre --with-pcre-jit \
---with-zlib=$LIBDIR/zlib \
+--with-openssl=shared \
+--with-pcre=shared --with-pcre-jit \
+--with-zlib=shared \
+--without-poll_module \
 --without-http_ssi_module \
 --without-http_userid_module \
 --without-http_geo_module \
