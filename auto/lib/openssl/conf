@@ -3,7 +3,43 @@
 # Copyright (C) Nginx, Inc.
 
 
-if [ $OPENSSL != NONE ]; then
+if [ "$OPENSSL" = shared ]; then
+
+    have=NGX_OPENSSL . auto/have
+    have=NGX_SSL . auto/have
+
+    if [ "$NGX_PLATFORM" = win32 ]; then
+        OPENSSL_DIR="/usr/local/$HOST"
+    else
+        OPENSSL_DIR="/usr/local/ssl"
+    fi
+
+    if [ ! -d "$OPENSSL_DIR" ]; then
+        echo "OpenSSL dir $OPENSSL_DIR not found."
+        exit 1
+    fi
+
+    CORE_INCS="$CORE_INCS $OPENSSL_DIR/include"
+    CORE_DEPS="$CORE_DEPS $OPENSSL_DIR/include/openssl/ssl.h"
+    if [ -d "$OPENSSL_DIR/lib64" ]; then
+        CORE_LIBS="$CORE_LIBS -L$OPENSSL_DIR/lib64"
+    elif [ -d "$OPENSSL_DIR/lib" ]; then
+        CORE_LIBS="$CORE_LIBS -L$OPENSSL_DIR/lib"
+    else
+        echo "OpenSSL lib dir $OPENSSL_DIR/lib not found."
+        exit 1
+    fi
+    CORE_LIBS="$CORE_LIBS -lssl -lcrypto"
+    CORE_LIBS="$CORE_LIBS $NGX_LIBDL"
+    CORE_LIBS="$CORE_LIBS $NGX_LIBPTHREAD"
+
+    if [ "$NGX_PLATFORM" = win32 ]; then
+        CORE_LIBS="$CORE_LIBS -lgdi32 -lcrypt32 -lws2_32"
+    fi
+
+    OPENSSL=YES
+
+elif [ $OPENSSL != NONE ]; then
 
     have=NGX_OPENSSL . auto/have
     have=NGX_SSL . auto/have

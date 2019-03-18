@@ -3,7 +3,22 @@
 # Copyright (C) Nginx, Inc.
 
 
-if [ $ZLIB != NONE ]; then
+if [ $ZLIB = shared ]; then
+
+    have=NGX_ZLIB . auto/have
+
+    if [ "$NGX_PLATFORM" = win32 ]; then
+        ZLIB_DIR="/usr/local/$HOST"
+    else
+        ZLIB_DIR="/usr/local"
+    fi
+
+    CORE_INCS="$CORE_INCS $ZLIB_DIR/include"
+    CORE_LIBS="$CORE_LIBS -L$ZLIB_DIR/lib -lz"
+
+    ZLIB=YES
+
+elif [ $ZLIB != NONE ]; then
     CORE_INCS="$CORE_INCS $ZLIB"
 
     case "$NGX_CC_NAME" in
