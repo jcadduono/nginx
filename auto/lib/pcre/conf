@@ -5,7 +5,10 @@
 
 if [ $PCRE = shared ]; then
 
+    PCRE_LIBRARY=PCRE2
+
     have=NGX_PCRE . auto/have
+    have=NGX_PCRE2 . auto/have
 
     if [ "$NGX_PLATFORM" = win32 ]; then
         PCRE_DIR="/usr/local/$HOST"
@@ -14,7 +17,7 @@ if [ $PCRE = shared ]; then
     fi
 
     CORE_INCS="$CORE_INCS $PCRE_DIR/include"
-    CORE_LIBS="$CORE_LIBS -L$PCRE_DIR/lib -lpcre"
+    CORE_LIBS="$CORE_LIBS -L$PCRE_DIR/lib -lpcre2-8"
     PCRE=YES
 
     if [ $PCRE_JIT = YES ]; then
